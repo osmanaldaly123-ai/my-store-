@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تفاصيل المنتج</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #E1F5FE;
+      margin: 0;
+      padding: 30px;
+      text-align: center;
+      color: #000;
+    }
+    .product-container {
+      background: #fff;
+      max-width: 400px;
+      margin: auto;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    h2 {
+      margin: 10px 0;
+      font-size: 1.8em;
+    }
+    p.price {
+      font-size: 1.4em;
+      color: #2196F3;
+      margin: 15px 0;
+    }
+    p.description {
+      font-size: 1em;
+      color: #555;
+      margin: 10px 0 20px;
+      line-height: 1.6;
+    }
+    button {
+      background-color: #2196F3;
+      border: none;
+      color: white;
+      font-size: 1.1em;
+      padding: 12px 25px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #1565C0;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .slider {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .slider img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+    }
+    .slider-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+    .slider-controls button {
+      padding: 6px 12px;
+      font-size: 0.9em;
+      background-color: #eee;
+      color: #333;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    .slider-controls button:hover {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="product-container" id="productContainer">
+    <!-- سيتم عرض تفاصيل المنتج والصور هنا -->
+  </div>
+
+  <script>
+    const product = JSON.parse(localStorage.getItem('selectedProduct'));
+    const container = document.getElementById('productContainer');
+
+    if (!product) {
+      container.innerHTML = '<p class="error">⚠ لم يتم تحديد أي منتج. الرجاء العودة إلى الصفحة الرئيسية.</p>';
+    } else {
+      let sliderHTML = '';
+      const images = product.images || [];
+
+      if (images.length > 0) {
+        sliderHTML = `
+          <div class="slider">
+            <img id="sliderImage" src="${images[0]}" alt="صورة إضافية" />
+            <div class="slider-controls">
+              <button onclick="prevImage()">⬅ السابق</button>
+              <button onclick="nextImage()">التالي ➡</button>
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" />
+        <h2>${product.name}</h2>
+        <p class="price">${product.price} ريال</p>
+        <p class="description">${product.description || "لا يوجد وصف لهذا المنتج."}</p>
+        ${sliderHTML}
+        <button id="orderBtn">طلب المنتج</button>
+      `;
+
+      document.getElementById('orderBtn').addEventListener('click', () => {
+        localStorage.setItem('selectedProduct', JSON.stringify(product));
+        window.location.href = 'order.html';
+      });
+
+      let currentImageIndex = 0;
+      const sliderImage = document.getElementById('sliderImage');
+
+      window.nextImage = function () {
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        sliderImage.src = images[currentImageIndex];
+      };
+
+      window.prevImage = function () {
+        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+        sliderImage.src = images[currentImageIndex];
+      };
+    }
+  </script>
+
+</body>
+</html>

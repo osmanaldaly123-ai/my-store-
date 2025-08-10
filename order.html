@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>طلب المنتج</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #E1F5FE;
+      padding: 40px 20px;
+      text-align: center;
+      color: #000;
+    }
+
+    .order-form {
+      background-color: #fff;
+      max-width: 400px;
+      margin: auto;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #1565C0;
+    }
+
+    .back-button {
+      background-color: gray;
+      margin-top: 20px;
+    }
+
+    .success-message {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+    }
+
+    /* إضافة لتنسيق عرض المنتج */
+    .product-summary {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .product-summary img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      max-height: 200px;
+      object-fit: contain;
+    }
+
+    .product-summary h3 {
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+
+    .product-summary p {
+      color: #2196F3;
+      font-size: 1.2em;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="order-form">
+    <h2>طلب المنتج</h2>
+
+    <div class="product-summary" id="productSummary">
+      <!-- سيتم عرض تفاصيل المنتج هنا -->
+    </div>
+
+    <input type="text" id="name" placeholder="الاسم الكامل" required />
+    <input type="tel" id="phone" placeholder="رقم الهاتف" required />
+    <input type="text" id="address" placeholder="العنوان" required />
+    
+    <select id="paymentMethod">
+      <option value="">اختر وسيلة الدفع</option>
+      <option value="الدفع عند الاستلام">الدفع عند الاستلام</option>
+      <option value="بطاقات مدى / فيزا / ماستركارد">بطاقات مدى / فيزا / ماستركارد</option>
+      <option value="أبل باي">أبل باي</option>
+    </select>
+
+    <button onclick="submitOrder()">تأكيد الطلب</button>
+    <button class="back-button" onclick="window.history.back()">رجوع</button>
+    <div class="success-message" id="message"></div>
+  </div>
+
+  <script>
+    // جلب المنتج المختار من localStorage وعرضه في الصفحة
+    const product = JSON.parse(localStorage.getItem('selectedProduct'));
+    const productSummary = document.getElementById('productSummary');
+
+    if(product) {
+      productSummary.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" />
+        <h3>${product.name}</h3>
+        <p>${product.price} ريال</p>
+      `;
+    } else {
+      productSummary.innerHTML = '<p style="color:red;">⚠ لم يتم اختيار منتج. الرجاء العودة واختيار منتج.</p>';
+    }
+
+    function submitOrder() {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const payment = document.getElementById('paymentMethod').value;
+
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+
+      if (!name || !phone || !address || !payment || !product) {
+        alert('يرجى تعبئة جميع الحقول واختيار وسيلة الدفع.');
+        return;
+      }
+
+      const order = {
+        name,
+        phone,
+        address,
+        product,
+        payment,
+        time: new Date().toLocaleString()
+      };
+
+      orders.push(order);
+      localStorage.setItem('orders', JSON.stringify(orders));
+      localStorage.setItem('latestOrder', JSON.stringify(order));
+
+      window.location.href = 'payment.html';
+    }
+  </script>
+
+</body>
+</html>

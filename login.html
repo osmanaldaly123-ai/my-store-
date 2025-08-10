@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تسجيل الدخول</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(to bottom right, #E3F2FD, #BBDEFB);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .login-box {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #0D47A1;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      margin-top: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #1565C0;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-size: 14px;
+      color: green;
+    }
+
+    #message.error {
+      color: red;
+    }
+
+    .back-btn {
+      margin-top: 20px;
+      background-color: #e0e0e0;
+      color: #333;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+
+    .back-btn:hover {
+      background-color: #bdbdbd;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>تسجيل الدخول إلى الإدارة</h2>
+    <input type="email" id="email" placeholder="البريد الإلكتروني" required autocomplete="off" />
+    <input type="password" id="password" placeholder="كلمة المرور" required autocomplete="new-password" />
+    <button onclick="login()">تسجيل الدخول</button>
+    <div id="message"></div>
+    <button class="back-btn" onclick="goBack()">⬅ العودة للرئيسية</button>
+  </div>
+
+  <script>
+    // افراغ كلمة المرور عند تحميل الصفحة لضمان عدم حفظها
+    window.onload = () => {
+      document.getElementById("password").value = "";
+    };
+
+    function goBack() {
+      window.location.href = "index.html";
+    }
+
+    function login() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const message = document.getElementById("message");
+
+      // بيانات الدخول الصحيحة
+      const correctEmail = "osmanaldaly123@gmail.com";
+      const correctPassword = "35351";
+
+      if (email === correctEmail && password === correctPassword) {
+        message.textContent = "✅ تم تسجيل الدخول بنجاح!";
+        message.className = "";
+        
+        // توجيه بعد ثانية واحدة
+        setTimeout(() => {
+          window.location.href = "admin.html";
+        }, 1000);
+      } else {
+        message.textContent = "❌ البريد الإلكتروني أو كلمة المرور غير صحيحة.";
+        message.className = "error";
+        // افراغ كلمة المرور بعد الخطأ
+        document.getElementById("password").value = "";
+      }
+    }
+  </script>
+</body>
+</html>

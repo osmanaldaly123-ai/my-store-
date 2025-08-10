@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>تفاصيل المنتج</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f9f9f9;
+      padding: 30px;
+      max-width: 700px;
+      margin: auto;
+      color: #333;
+    }
+    .product-image {
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 15px;
+      color: #1e88e5;
+    }
+    .price {
+      font-size: 1.8em;
+      color: #4caf50;
+      margin-bottom: 25px;
+    }
+    .description {
+      font-size: 1.1em;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+    button {
+      background-color: #2196F3;
+      border: none;
+      color: white;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #1565c0;
+    }
+    .back-btn {
+      margin-bottom: 30px;
+      display: inline-block;
+      color: #2196F3;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="back-btn" onclick="history.back()">⬅ العودة</div>
+
+  <img id="productImage" class="product-image" src="" alt="صورة المنتج" />
+  <h1 id="productName">اسم المنتج</h1>
+  <div class="price" id="productPrice">السعر</div>
+  <div class="description" id="productDescription">وصف المنتج هنا</div>
+
+  <button onclick="orderProduct()">اطلب الآن</button>
+
+  <script>
+    // جلب بيانات المنتج من localStorage
+    const product = JSON.parse(localStorage.getItem('selectedProduct'));
+
+    if (!product) {
+      document.body.innerHTML = '<p>لا توجد بيانات للمنتج.</p>';
+    } else {
+      document.getElementById('productImage').src = product.image;
+      document.getElementById('productImage').alt = product.name;
+      document.getElementById('productName').textContent = product.name;
+      document.getElementById('productPrice').textContent = product.price + ' ريال';
+
+      // إذا لديك وصف للمنتج، خزنته مع المنتج أضفه هنا. لو ما عندك، خلي النص بسيط.
+      document.getElementById('productDescription').textContent = product.description || 'هذا المنتج مميز وجودته عالية. اطلبه الآن!';
+
+    }
+
+    function orderProduct() {
+      // توجه إلى صفحة الطلب مع حفظ المنتج المختار إذا تحتاج
+      localStorage.setItem('selectedProduct', JSON.stringify(product));
+      window.location.href = 'order.html'; // أو أي صفحة طلب عندك
+    }
+  </script>
+
+</body>
+</html>

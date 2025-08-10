@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>لوحة التحكم - متجر وصال</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 30px;
+      color: #333;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      gap: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      color: #1e88e5;
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      background-color: #1e88e5;
+      color: white;
+    }
+
+    .btn:hover {
+      background-color: #1565c0;
+    }
+
+    .btn-danger {
+      background-color: #e53935;
+    }
+
+    .btn-danger:hover {
+      background-color: #c62828;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    input, textarea, select {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 100%;
+      margin-top: 5px;
+      resize: vertical;
+    }
+
+    #message {
+      color: green;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    #error {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .top-bar {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <button class="btn" onclick="goToOrders()">📋 قائمة الطلبات</button>
+    <h1>لوحة تحكم الإدارة</h1>
+    <div>
+      <button class="btn" onclick="goToManageProducts()">🛒 قائمة المنتجات</button>
+      <button class="btn btn-danger" onclick="logout()">🚶‍♂ خروج</button>
+    </div>
+  </div>
+
+  <h2>🛒 إضافة منتج جديد</h2>
+
+  <div class="form-group">
+    <label>اسم المنتج</label>
+    <input type="text" id="name" placeholder="مثال: باقة ورد" />
+  </div>
+  <div class="form-group">
+    <label>اسم ملف الصورة أو الرابط (الصورة الرئيسية)</label>
+    <input type="text" id="image" placeholder="مثال: flower.jpg أو https://example.com/image.jpg" />
+  </div>
+
+  <!-- الإضافة: اختيار القسم -->
+  <div class="form-group">
+    <label>القسم</label>
+    <select id="category">
+      <option value="">-- اختر القسم --</option>
+      <option value="men">رجال</option>
+      <option value="women">نساء</option>
+      <option value="kids">أطفال</option>
+      <option value="shoes">أحذية</option>
+      <option value="accessories">إكسسوارات</option>
+      <option value="offers">عروض</option>
+      <option value="home">الشاشة الرئيسية</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>صور إضافية (أسماء ملفات أو روابط، مفصولة بفواصل)</label>
+    <input type="text" id="images" placeholder="مثال: img1.jpg, img2.jpg, https://example.com/img3.jpg" />
+  </div>
+
+  <div class="form-group">
+    <label>السعر</label>
+    <input type="number" id="price" placeholder="مثال: 150" />
+  </div>
+  <div class="form-group">
+    <label>وصف المنتج</label>
+    <textarea id="description" rows="4" placeholder="اكتب وصفاً مختصراً للمنتج هنا..."></textarea>
+  </div>
+
+  <button class="btn" onclick="addProduct()">➕ إضافة المنتج</button>
+
+  <div id="message"></div>
+  <div id="error"></div>
+
+  <script>
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+
+    function saveAndRenderProducts() {
+      localStorage.setItem("products", JSON.stringify(products));
+    }
+
+    function addProduct() {
+      const name = document.getElementById("name").value.trim();
+      let image = document.getElementById("image").value.trim();
+      const category = document.getElementById("category").value;
+      const imagesInput = document.getElementById("images").value.trim();
+      const price = document.getElementById("price").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const message = document.getElementById("message");
+      const error = document.getElementById("error");
+
+      message.textContent = "";
+      error.textContent = "";
+
+      if (!name || !image || !price || !description || !category) {
+        error.textContent = "⚠ الرجاء تعبئة جميع الحقول، بما في ذلك اختيار القسم.";
+        return;
+      }
+
+      if (!image.startsWith("http://") && !image.startsWith("https://") && !image.startsWith("./") && !image.startsWith("/")) {
+        image = "images/" + image;
+      }
+
+      // تجهيز مصفوفة الصور الإضافية
+      let images = [];
+      if (imagesInput) {
+        images = imagesInput.split(",").map(item => item.trim()).filter(item => item !== "");
+        images = images.map(img => {
+          if (!img.startsWith("http://") && !img.startsWith("https://") && !img.startsWith("./") && !img.startsWith("/")) {
+            return "images/" + img;
+          }
+          return img;
+        });
+      }
+
+      products.push({ name, image, images, price, description, category });
+      saveAndRenderProducts();
+
+      document.getElementById("name").value = "";
+      document.getElementById("image").value = "";
+      document.getElementById("category").value = "";
+      document.getElementById("images").value = "";
+      document.getElementById("price").value = "";
+      document.getElementById("description").value = "";
+      message.textContent = "✅ تم إضافة المنتج بنجاح!";
+    }
+
+    function logout() {
+      window.location.href = "index.html";
+    }
+
+    function goToOrders() {
+      window.location.href = "orders.html";
+    }
+
+    function goToManageProducts() {
+      window.location.href = "manage-products.html";
+    }
+  </script>
+</body>
+</html>

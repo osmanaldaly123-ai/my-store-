@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>إدارة المنتجات</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f9fafe;
+      padding: 20px;
+      color: #222;
+    }
+    h1 {
+      color: #1565c0;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #1565c0;
+      color: white;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="number"] {
+      width: 90%;
+      padding: 6px 8px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      font-size: 14px;
+    }
+    button.save-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+    button.save-btn:hover {
+      background-color: #388e3c;
+    }
+    button.delete-btn {
+      background-color: #e53935;
+      color: white;
+    }
+    button.delete-btn:hover {
+      background-color: #b71c1c;
+    }
+    button.back-btn {
+      background-color: #1976d2;
+      color: white;
+      margin-bottom: 20px;
+    }
+    button.back-btn:hover {
+      background-color: #0d47a1;
+    }
+    #message {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      color: green;
+      min-height: 24px;
+    }
+    #error {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      color: red;
+      min-height: 24px;
+    }
+    img {
+      max-width: 80px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="back-btn" onclick="window.location.href='admin.html'">🔙 رجوع</button>
+
+  <h1>إدارة المنتجات</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>صورة المنتج</th>
+        <th>رابط الصورة</th>
+        <th>اسم المنتج</th>
+        <th>السعر (ريال)</th>
+        <th>حفظ</th>
+        <th>حذف</th>
+      </tr>
+    </thead>
+    <tbody id="productsTableBody">
+      <!-- سيتم إدخال المنتجات هنا -->
+    </tbody>
+  </table>
+
+  <div id="message"></div>
+  <div id="error"></div>
+
+  <script>
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+
+    function renderProducts() {
+      const tbody = document.getElementById('productsTableBody');
+      tbody.innerHTML = '';
+
+      if (products.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6">لا توجد منتجات حالياً.</td></tr>';
+        return;
+      }
+
+      products.forEach((product, i) => {
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+          <td><img src="${product.image}" alt="${product.name}"></td>
+          <td><input type="text" id="image-${i}" value="${product.image}"></td>
+          <td><input type="text" id="name-${i}" value="${product.name}"></td>
+          <td><input type="number" id="price-${i}" value="${product.price}" min="0"></td>
+          <td><button class="save-btn" onclick="saveProduct(${i})">حفظ</button></td>
+          <td><button class="delete-btn" onclick="deleteProduct(${i})">حذف</button></td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function saveProduct(i) {
+      const newName = document.getElementById(`name-${i}`).value.trim();
+      const newPriceStr = document.getElementById(`price-${i}`).value.trim();
+      const newImage = document.getElementById(`image-${i}`).value.trim();
+      const message = document.getElementById('message');
+      const error = document.getElementById('error');
+      message.textContent = '';
+      error.textContent = '';
+
+      if (newName === '') {
+        error.textContent = '⚠ يجب إدخال اسم المنتج.';
+        return;
+      }
+      if (newImage === '') {
+        error.textContent = '⚠ يجب إدخال رابط صورة المنتج.';
+        return;
+      }
+      if (newPriceStr === '' || isNaN(newPriceStr) || Number(newPriceStr) < 0) {
+        error.textContent = '⚠ السعر يجب أن يكون رقماً صحيحاً وغير سالب.';
+        return;
+      }
+
+      products[i].name = newName;
+      products[i].price = Number(newPriceStr);
+      products[i].image = newImage;
+
+      localStorage.setItem('products', JSON.stringify(products));
+      message.textContent = '✅ تم حفظ التعديلات بنجاح!';
+      renderProducts();
+    }
+
+    function deleteProduct(i) {
+      if (confirm('هل تريد حذف هذا المنتج؟')) {
+        products.splice(i, 1);
+        localStorage.setItem('products', JSON.stringify(products));
+        renderProducts();
+        const message = document.getElementById('message');
+        message.textContent = '✅ تم حذف المنتج.';
+        document.getElementById('error').textContent = '';
+      }
+    }
+
+    renderProducts();
+  </script>
+
+</body>
+</html>

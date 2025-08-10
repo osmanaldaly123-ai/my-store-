@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تأكيد الدفع</title>
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #E3F2FD;
+      padding: 40px 20px;
+      text-align: center;
+      color: #000;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #0D47A1;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin: 15px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 25px;
+      font-size: 1em;
+      background-color: #2196F3;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #1565C0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🎉 شكراً لطلبك!</h1>
+    <p>تم استلام طلبك بنجاح.</p>
+    <p id="paymentInfo">جاري تحميل معلومات الدفع...</p>
+
+    <a class="btn" href="index.html">العودة للصفحة الرئيسية</a>
+  </div>
+
+  <script>
+    const latestOrder = JSON.parse(localStorage.getItem('latestOrder'));
+    const paymentInfo = document.getElementById('paymentInfo');
+
+    if (latestOrder && latestOrder.payment) {
+      paymentInfo.textContent =` طريقة الدفع المختارة: ${latestOrder.payment}`;
+    } else {
+      paymentInfo.textContent = `لم يتم العثور على معلومات الدفع.`;
+    }
+  </script>
+
+</body>
+</html>
